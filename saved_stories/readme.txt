@@ -1,0 +1,1 @@
+In this folder the game sessions will be saved real time and stored as text files.

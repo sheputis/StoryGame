@@ -1,0 +1,1 @@
+add a png image in the folder "nude_pics" and call it "game_display". This will be the pop up image when starting the game.

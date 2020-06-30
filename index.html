@@ -1,0 +1,630 @@
+<!doctype html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+  <head>
+    <title>Socket.IO chat</title>
+    <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font: 13px Helvetica, Arial; width:100%;height:100%;text-align: center }
+
+    #messages { list-style-type: none; margin: 0; padding: 0; }
+    #messages li { padding: 5px 10px;text-align: left }
+    #messages li:nth-child(odd) { background: #eee; }
+
+    #users { list-style-type: none; margin: 0; padding: 0; }
+    #users li { padding: 5px 10px; }
+
+    .w3-row-padding{
+      width:100%;
+    }
+    #game_screen{
+
+      width:70%;
+    }
+    #info_screen{
+      width:28%;
+    }
+    #game_1{
+      width:30%;
+      padding-top:20px;
+      padding-left: 10px;
+      padding-right: 10px;
+      /*height: 50%;*/
+    }
+    #game_2{
+      width:30%;
+      padding-top:20px;
+      padding-left: 10px;
+      padding-right: 10px;
+      /*height: 50%;*/
+    }
+    #game_3{
+      width:30%;
+      padding-top:20px;
+      padding-left: 10px;
+      padding-right: 10px;
+      /*height: 50%;*/
+    }
+    #game_4{
+      width:30%;
+      padding-top:20px;
+      padding-left: 10px;
+      padding-right: 10px;
+      /*height: 50%;*/
+    }
+
+    .container {
+      height: 100px;
+      overflow-y:scroll;
+      display: flex;
+      flex-direction:column-reverse;
+      position: relative;
+    }
+
+    .button {
+  background-color: #C0C0C0;
+  border: none;
+  color: white;
+  padding: 5px 3px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 13px;
+  width:100%;
+}
+.input{
+  color: black;
+  padding: 5px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 13px;
+}
+
+#input_game_1{
+  border: none;
+  background-color: transparent;
+  color: black;
+  text-decoration: none;
+  font-size: 13px;
+  height: 100px;
+  width:100%;
+  word-break: break-all;
+}
+#input_game_2{
+  border: none;
+  background-color: transparent;
+  color: black;
+  text-decoration: none;
+  font-size: 13px;
+  height: 100px;
+  width:100%;
+  word-break: break-all;
+}
+#input_game_3{
+  border: none;
+  background-color: transparent;
+  color: black;
+  text-decoration: none;
+  font-size: 13px;
+  height: 100px;
+  width:100%;
+  word-break: break-all;
+}
+#input_game_4{
+  border: none;
+  background-color: transparent;
+  color: black;
+  text-decoration: none;
+  font-size: 13px;
+  height: 100px;
+  width:100%;
+  word-break: break-all;
+}
+
+
+
+
+#text_submit_1{
+  float:right;
+  width:100%;
+}
+#text_submit_2{
+  float:right;
+  width:100%;
+}
+#text_submit_3{
+  float:right;
+  width:100%;
+}
+#text_submit_4{
+  float:right;
+  width:100%;
+}
+
+
+#game_1_input{
+  display:none;
+}
+#game_2_input{
+  display:none;
+}
+#game_3_input{
+  display:none;
+}
+#game_4_input{
+  display:none;
+}
+
+
+#new_game_button_1{
+  display: none;
+}
+#new_game_button_2{
+  display: none;
+}
+#new_game_button_3{
+  display: none;
+}
+#new_game_button_4{
+  display: none;
+}
+
+
+
+
+
+    </style>
+  </head>
+
+
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+
+<script>
+//import swal from 'sweetalert';
+
+function send_Chat(){
+  socket.emit('chat message', $('#m').val());
+  $('#m').val('');
+};
+function gen_paper_box(){
+  var new_box = document.createElement("input");
+  var node = document.createTextNode("This is new.");
+  new_box.appendChild(node);
+
+  var element = document.getElementById("paper_boxes");
+  element.appendChild(new_box);
+
+};
+
+$(function () {
+ var socket = io();
+ // this prompts a popup and tells the server the name of the users bitchass name
+ $(document).ready(()=>{
+
+swal({
+  title: "Type in your bitchass name:",
+  text: '*By submitting this, you agree to having your nudes leaked.',
+  content: "input",
+  button: {
+    text: "Submit",
+    //closeModal: false,
+  },
+}).then(unval_name =>{
+  console.log("fuck this 1");
+  socket.emit("login name", unval_name);
+  socket.on("login again",(res)=>{
+    if(res["login_status"]==false){
+      //swal.fire({text:"fuck"})
+      socket.emit("login name", prompt("C'mon man, can't you just type in another name, this one obviously already exists."));
+      //socket.emit("login name", unval_name);
+    }
+    else if(res["login_status"]==true){
+      swal.close();// text: "<img src='"+src+"' style='width:150px;'>"
+      src = "https://cdn.eso.org/images/thumb300y/eso1907a.jpg"
+      swal({
+        text:"Enjoy the GAME ",
+        icon: "game_display.png",
+        });
+    };
+  });
+})
+/*
+   var unval_name = prompt("enter thy name");
+   //socket.emit("check login name", unval_name);
+   socket.emit("login name", unval_name);
+   socket.on("login again",(res)=>{
+     if(res["login_status"]==false){
+       socket.emit("login name", prompt("it was an invalid name,enter thy name"));
+     };
+   });*/
+  // socket.emit("login name", prompt("Enter your bitch-ass name:"));
+
+ });
+
+ $('form').submit(function(e) {
+   e.preventDefault(); // prevents page reloading
+   socket.emit('chat message', $('#m').val());
+   $('#m').val('');
+   return false;
+ });
+ $("#chat_button").click( (e)=>{
+    e.preventDefault(); // prevents page reloading
+  socket.emit('chat message', {id:socket.id,msg:$('#m').val()});
+  //console.log(socket);
+    $('#m').val('');
+    return false;
+ })
+
+
+
+ $("#new_game_button_1").click( (e)=>{
+    e.preventDefault(); // prevents page reloading
+    socket.emit('new game 1');
+    return false;
+ })
+ $("#new_game_button_2").click( (e)=>{
+    e.preventDefault(); // prevents page reloading
+    socket.emit('new game 2');
+    return false;
+ })
+ $("#new_game_button_3").click( (e)=>{
+    e.preventDefault(); // prevents page reloading
+    socket.emit('new game 3');
+    return false;
+ })
+ $("#new_game_button_4").click( (e)=>{
+    e.preventDefault(); // prevents page reloading
+    socket.emit('new game 4');
+    return false;
+ })
+
+
+
+  socket.on("message",(msg)=>{
+    console.log(msg);
+    if(msg["state"]=="active"){
+      //show_game(true,"game_1_input", msg["last_txt"]);
+      console.log(msg["game_nr"])
+      show_game(true,msg["game_nr"], msg["last_txt"]);
+    }
+    else{
+      //show_game(false,"game_1_input", msg["last_txt"]);
+      show_game(false,msg["game_nr"], msg["last_txt"]);
+    }
+
+    if(msg["game_status"]=="finished"){
+      console.log(msg["story"]);
+      var full_story = "THE STORY: "
+      msg["story"].forEach((item, i) => {
+        full_story+= " "+(item["text"]);
+      });
+      //show_game(true,"game_1_input", full_story);
+      show_game(true,msg["game_nr"], full_story);
+      //document.getElementById("letter_count_div_"+msg["game_nr"]).style.visibility="hidden";
+      //document.getElementById("input_game_"+msg["game_nr"]).style.visibility="hidden";
+      document.getElementById("letter_count_div_"+msg["game_nr"]).style.display="none";
+      document.getElementById("input_game_"+msg["game_nr"]).style.display="none";
+
+      document.getElementById("new_game_button_"+msg["game_nr"]).style.display="block";
+      document.getElementById("check_in_button_"+msg["game_nr"]).style.display="none";
+    }
+    if(msg["game_status"]=="blank"){
+      var full_story = "";
+      //show_game(false,"game_1_input", full_story);
+      show_game(false,msg["game_nr"], full_story);
+    //  document.getElementById("letter_count_div").style.visibility="visible";
+    //  document.getElementById("input_game").style.visibility="visible";
+      document.getElementById("letter_count_div_"+msg["game_nr"]).style.display="block";
+      document.getElementById("input_game_"+msg["game_nr"]).style.display="block";
+
+      document.getElementById("new_game_button_"+msg["game_nr"]).style.display="none";
+      document.getElementById("check_in_button_"+msg["game_nr"]).style.display="block";
+    }
+  });
+
+
+  socket.on('chat message', function(msg){
+     $('#messages').append($('<li>').text(msg));
+   });
+
+   // updating names in the chat
+   socket.on("update names for clients",function(list_names){
+     $('#users').empty();
+     list_names.forEach(name => {$('#users').append($('<li>').text(name))});
+   });
+   //button to ask if the player can check in the game
+   $("#check_in_button_1").click( (e)=>{
+      e.preventDefault(); // prevents page reloading
+      console.log("checked in 1")
+      socket.emit("check_in 1");
+      return false;
+   });
+   $("#check_in_button_2").click( (e)=>{
+      e.preventDefault(); // prevents page reloading
+      console.log("checked in 2")
+      socket.emit("check_in 2");
+      return false;
+   });
+   $("#check_in_button_3").click( (e)=>{
+      e.preventDefault(); // prevents page reloading
+      console.log("checked in 3")
+      socket.emit("check_in 3");
+      return false;
+   });
+   $("#check_in_button_4").click( (e)=>{
+      e.preventDefault(); // prevents page reloading
+      console.log("checked in 4")
+      socket.emit("check_in 4");
+      return false;
+   });
+
+
+
+
+
+
+   $("#text_submit_1").click( (e)=>{
+      e.preventDefault(); // prevents page reloading
+      socket.emit("text submit 1",$("#input_game_1").val());
+      $("#input_game_1").val(" ");
+      return false;
+   });
+   $("#text_submit_2").click( (e)=>{
+      e.preventDefault(); // prevents page reloading
+      socket.emit("text submit 2",$("#input_game_2").val());
+      $("#input_game_2").val(" ");
+      return false;
+   });
+   $("#text_submit_3").click( (e)=>{
+      e.preventDefault(); // prevents page reloading
+      socket.emit("text submit 3",$("#input_game_3").val());
+      $("#input_game_3").val(" ");
+      return false;
+   });
+   $("#text_submit_4").click( (e)=>{
+      e.preventDefault(); // prevents page reloading
+      socket.emit("text submit 4",$("#input_game_4").val());
+      $("#input_game_4").val(" ");
+      return false;
+   });
+
+   //returns a list of players in the game
+   socket.on("update_players_in_game",(players_list)=>{
+     fill_out_connected_players("connected_to_game_1",players_list[0]);
+     fill_out_connected_players("connected_to_game_2",players_list[1]);
+     fill_out_connected_players("connected_to_game_3",players_list[2]);
+     fill_out_connected_players("connected_to_game_4",players_list[3]);
+
+   });
+   /*
+   socket.on("the story",(full_story)=>{
+     //document.getElementById("full_story").innerHTML =full_story;
+     show_game(true,"game_1_input"," THE STORY : " + full_story);
+     //document.getElementById("letter_count_div").style.visibility="hidden";
+     //document.getElementById("input_game").style.visibility="hidden";
+     document.getElementById("new_game_button_1").style.display="block";
+     document.getElementById("check_in_button").style.display="none";
+   }) */
+
+});
+
+// here will be the client side mechanics
+function update_letter_count_1(){ //updating the letter count of the game box
+  document.getElementById("letter_count_1").innerHTML ="letters: "+(90 - document.getElementById("input_game_1").value.length);
+};
+function update_letter_count_2(){ //updating the letter count of the game box
+  document.getElementById("letter_count_2").innerHTML ="letters: "+(90 - document.getElementById("input_game_2").value.length);
+};
+function update_letter_count_3(){ //updating the letter count of the game box
+  document.getElementById("letter_count_3").innerHTML ="letters: "+(90 - document.getElementById("input_game_3").value.length);
+};
+function update_letter_count_4(){ //updating the letter count of the game box
+  document.getElementById("letter_count_4").innerHTML ="letters: "+(90 - document.getElementById("input_game_4").value.length);
+};
+
+function show_game(bool,game_nr,last_txt){ // hides the game (yes/no, game_id, last txt) inputs
+  if(bool){
+    //document.getElementById(game_id).style.visibility = "visible";
+    //console.log("game_"+game_id+"_input")
+    document.getElementById("game_"+game_nr+"_input").style.display = "block";
+    document.getElementById("previous_words_"+game_nr).innerHTML = last_txt;
+    document.getElementById("previous_words_"+game_nr).style.textAlign = "left";
+  }
+  else{
+    //document.getElementById(game_id).style.visibility = "hidden";
+    document.getElementById("game_"+game_nr+"_input").style.display = "none";
+  }
+}
+function fill_out_connected_players(connected_to_game_id,players){
+  $('#'+connected_to_game_id).empty();
+  players.forEach((item, i) => {
+    var active = false;
+    var style = "background-color:white;";
+    if(item["player_active"]){style="background-color:#8FF3AE;"; }
+    $('#'+connected_to_game_id).append(`<p style=${style}> `+ item["user_name"] + "</p>")
+  });
+}
+</script>
+
+  <body > <! –– style="background-image: url('/pass_pic.jpg');"––>
+<div class="w3-row-padding">
+
+    <div id="info_screen" class="w3-third">
+  <div class="w3-card">
+  <div class="w3-container w3-red">
+    <h1><b>Who be in the room?</b></h1>
+  </div>
+  <div class="w3-container w3-xlarge">
+    <ul id="users"></ul>
+  </div>
+
+
+
+  <div class="w3-container w3-red">
+    <p class="w3-opacity">CHAT:</p>
+  </div>
+  </div>
+
+<div class="container">
+
+<div>
+<input id="m" autocomplete="off" class="input" />
+<button id= "chat_button" type="button" class="button">send</button>
+</div>
+<ul id="messages"></ul>
+</div>
+
+  </div>
+
+
+
+
+
+  <div id="game_screen" class="w3-third">
+
+    <div class="w3-card">
+    <div class="w3-container w3-blue">
+      <h1><b>The different games</b></h1>
+    </div>
+    </div>
+
+
+    <div id="game_1" class="w3-third">
+    <div  class="w3-container w3-blue">
+      <p class="w3-opacity">Game ONE</p>
+    </div>
+
+    <button id="check_in_button_1" class="button">press to check in</button>
+    <button id="new_game_button_1" class="button">New Game</button>
+    <div  class="w3-container w3-blue">
+      <p class="w3-opacity">Connected:</p>
+    </div>
+
+    <div id="connected_to_game_1">
+
+    </div>
+    <div id="game_1_input">
+    <div style="background-image: url('https://s3.amazonaws.com/caself/products/photos/000/001/162/original/grid_paper_background-blue_gray.jpg');">
+      <p id="previous_words_1"></p>
+      <textarea  id="input_game_1" type="text" maxlength="90" oninput="update_letter_count_1()" ></textarea>
+    </div>
+
+    <div id="letter_count_div_1" class="w3-container w3-blue">
+      <p id = "letter_count_1" class="w3-opacity">letters: 90</p>
+      <button id="text_submit_1" class="button">Submit</button>
+    </div>
+    </div>
+
+      </div>
+
+
+
+
+      <div id="game_2" class="w3-third">
+      <div  class="w3-container w3-blue">
+        <p class="w3-opacity">Game TWO</p>
+      </div>
+      <button id="check_in_button_2" class="button">press to check in</button>
+      <button id="new_game_button_2" class="button">New Game</button>
+      <div  class="w3-container w3-blue">
+        <p class="w3-opacity">Connected:</p>
+      </div>
+
+      <div id="connected_to_game_2">
+
+      </div>
+      <div id="game_2_input">
+      <div style="background-image: url('https://s3.amazonaws.com/caself/products/photos/000/001/162/original/grid_paper_background-blue_gray.jpg');">
+        <p id="previous_words_2"></p>
+        <textarea  id="input_game_2" type="text" maxlength="90" oninput="update_letter_count_2()" ></textarea>
+      </div>
+
+      <div id="letter_count_div_2" class="w3-container w3-blue">
+        <p id = "letter_count_2" class="w3-opacity">letters: 90</p>
+        <button id="text_submit_2" class="button">Submit</button>
+      </div>
+      </div>
+
+        </div>
+
+
+
+        <div id="game_3" class="w3-third">
+        <div  class="w3-container w3-blue">
+          <p class="w3-opacity">Game THREE</p>
+        </div>
+        <button id="check_in_button_3" class="button">press to check in</button>
+        <button id="new_game_button_3" class="button">New Game</button>
+        <div  class="w3-container w3-blue">
+          <p class="w3-opacity">Connected:</p>
+        </div>
+
+        <div id="connected_to_game_3">
+
+        </div>
+        <div id="game_3_input">
+        <div style="background-image: url('https://s3.amazonaws.com/caself/products/photos/000/001/162/original/grid_paper_background-blue_gray.jpg');">
+          <p id="previous_words_3"></p>
+          <textarea  id="input_game_3" type="text" maxlength="90" oninput="update_letter_count_3()" ></textarea>
+        </div>
+
+        <div id="letter_count_div_3" class="w3-container w3-blue">
+          <p id = "letter_count_3" class="w3-opacity">letters: 90</p>
+          <button id="text_submit_3" class="button">Submit</button>
+        </div>
+        </div>
+
+          </div>
+
+
+
+          <div id="game_4" class="w3-third">
+          <div  class="w3-container w3-blue">
+            <p class="w3-opacity">Game FOUR</p>
+          </div>
+          <button id="check_in_button_4" class="button">press to check in</button>
+          <button id="new_game_button_4" class="button">New Game</button>
+          <div  class="w3-container w3-blue">
+            <p class="w3-opacity">Connected:</p>
+          </div>
+
+          <div id="connected_to_game_4">
+
+          </div>
+          <div id="game_4_input">
+          <div style="background-image: url('https://s3.amazonaws.com/caself/products/photos/000/001/162/original/grid_paper_background-blue_gray.jpg');">
+            <p id="previous_words_4"></p>
+            <textarea  id="input_game_4" type="text" maxlength="90" oninput="update_letter_count_4()" ></textarea>
+          </div>
+
+          <div id="letter_count_div_4" class="w3-container w3-blue">
+            <p id = "letter_count_4" class="w3-opacity">letters: 90</p>
+            <button id="text_submit_4" class="button">Submit</button>
+          </div>
+          </div>
+
+            </div>
+
+
+
+
+  </div>
+
+
+
+
+</div>
+
+
+
+
+
+
+  </body>
+</html>
